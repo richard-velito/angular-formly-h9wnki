@@ -14,14 +14,14 @@ export class AppComponent {
       key: 'inputOutside1',
       type: 'input',
       templateOptions: {
-        label: 'Input outside 1 .. .length > 3',
+        label: 'Input outside 1 ( if length > 3 = hide repeat )',
       },
     },
     {
       key: 'inputOutside2',
       type: 'input',
       templateOptions: {
-        label: 'Input outside 2 .. .length > 3',
+        label: 'Input outside 2 ( if length > 3 = required input inside 2 )',
       },
     },
     {
@@ -81,8 +81,8 @@ export function sectionHasRequiredFields(
 ): boolean {
   console.log(
     '[DEBUG] sectionHasRequiredFields',
-    field,
-    JSON.stringify(formState)
+    field
+    // JSON.stringify(formState)
   );
 
   return existsRequired(field, 0);
@@ -95,6 +95,7 @@ export function existsRequired(
   console.log(
     '[DEBUG] existsRequired',
     field.key,
+    field.id,
     // (field as any)._expressionProperties,
     JSON.stringify(field?.templateOptions)
   );
@@ -107,19 +108,19 @@ export function existsRequired(
     return true;
   }
 
-  if (
-    field.fieldArray &&
-    field.fieldArray.fieldGroup &&
-    Array.isArray(field.fieldArray.fieldGroup)
-  ) {
-    for (const item of field.fieldArray.fieldGroup) {
+  if (field.fieldGroup && field.fieldGroup.length > 0) {
+    for (const item of field.fieldGroup) {
       response = existsRequired(item, level + 1);
       if (response) {
         break;
       }
     }
-  } else if (field.fieldGroup && field.fieldGroup.length > 0) {
-    for (const item of field.fieldGroup) {
+  } else if (
+    field.fieldArray &&
+    field.fieldArray.fieldGroup &&
+    Array.isArray(field.fieldArray.fieldGroup)
+  ) {
+    for (const item of field.fieldArray.fieldGroup) {
       response = existsRequired(item, level + 1);
       if (response) {
         break;
